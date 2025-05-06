@@ -11,7 +11,13 @@ export async function login(formData: FormData) {
     password: formData.get("password") as string,
   };
   const { data: user, error } = await supabase.auth.signInWithPassword(data);
+  if (error) {
+    if (error.message.includes("Invalid login credentials")) {
+      return { error: "Invalid email or password" };
+    }
+    return { error: "An unexpected error occurred. Please try again." };
+  }
 
   revalidatePath("/", "layout");
-  return { error: error, user: user?.user };
+  return { success: true, user: user?.user };
 }

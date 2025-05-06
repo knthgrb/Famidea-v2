@@ -18,8 +18,16 @@ export async function signup(formData: FormData) {
     },
   };
 
-  const { error } = await supabase.auth.signUp(data);
+  const { data: signupData, error } = await supabase.auth.signUp(data);
+  console.log(error);
+  if (error) {
+    // Show error to user
+    if (error.message.includes("already registered")) {
+      return { error: "User already exists" };
+    }
+    return { error: "An unexpected error occurred. Please try again." };
+  }
 
   revalidatePath("/", "layout");
-  return { error: error };
+  return { success: true };
 }
