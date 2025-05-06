@@ -6,21 +6,16 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
-const userTypes = [
-  { value: "patient", label: "Patient" },
-  { value: "birth_center", label: "Birth Center" },
-];
+const userTypes = [{ value: "birth_center", label: "Birth Center" }];
 
 export default function SignupPageClientComponent() {
   const [form, setForm] = useState({
     email: "",
     password: "",
-    userType: "patient",
+    userType: "birth_center",
   });
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
-  const allowedUserTypes = ["patient", "birth_center"];
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -32,10 +27,6 @@ export default function SignupPageClientComponent() {
     e.preventDefault();
     setLoading(true);
     try {
-      if (!allowedUserTypes.includes(form.userType)) {
-        throw new Error("Invalid user type");
-      }
-
       const formData = new FormData();
       formData.append("email", form.email);
       formData.append("password", form.password);
@@ -77,6 +68,17 @@ export default function SignupPageClientComponent() {
           <h2 className="font-bold text-3xl mb-2 text-white">
             Sign up for Your Account
           </h2>
+          <div className="bg-yellow-100 text-yellow-800 rounded px-3 py-2 mb-2 text-sm font-medium">
+            <div>
+              Note: Only Birth Center account creation is available at this
+              time.
+            </div>
+            <div>
+              To create an account as a patient, download the{" "}
+              <span className="font-semibold">Famidea</span> mobile app in
+              Google Play.
+            </div>
+          </div>
           <label className="text-white font-semibold">
             Email Address
             <input
@@ -98,26 +100,6 @@ export default function SignupPageClientComponent() {
               required
               className="w-full p-2 bg-transparent border-b-2 border-white text-white text-base mt-1 mb-4 focus:outline-none [&:-webkit-autofill]:bg-transparent [&:-webkit-autofill]:text-white [&:-webkit-autofill]:[-webkit-text-fill-color:white] [&:-webkit-autofill]:[transition:background-color_9999s_ease-in-out_0s]"
             />
-          </label>
-          <label className="text-white font-semibold">
-            User Type
-            <select
-              name="userType"
-              value={form.userType}
-              onChange={handleChange}
-              required
-              className="w-full p-2 bg-transparent border-b-2 border-white text-white text-base mt-1 mb-4 focus:outline-none"
-            >
-              {userTypes.map((type) => (
-                <option
-                  key={type.value}
-                  value={type.value}
-                  className="text-black"
-                >
-                  {type.label}
-                </option>
-              ))}
-            </select>
           </label>
           <button
             type="submit"
