@@ -32,22 +32,24 @@ export default function SignupPageClientComponent() {
       formData.append("password", form.password);
       formData.append("userType", form.userType);
 
-      const { success } = await signup(formData);
-      if (success) {
+      const { error } = await signup(formData);
+      if (error) {
+        let errorMessage = "An unexpected error occurred. Please try again.";
+        if (typeof error === "string") {
+          errorMessage = error;
+        } else if (error?.message) {
+          if (error.message.toLowerCase().includes("user already exists")) {
+            errorMessage = "User already exists";
+          } else {
+            errorMessage = error.message;
+          }
+        }
+        toast.error(errorMessage);
+      } else {
         router.push("/confirm-email");
       }
     } catch (error: any) {
-      let errorMessage = "An unexpected error occurred. Please try again.";
-      if (typeof error === "string") {
-        errorMessage = error;
-      } else if (error?.message) {
-        if (error.message.toLowerCase().includes("user already exists")) {
-          errorMessage = "User already exists";
-        } else {
-          errorMessage = error.message;
-        }
-      }
-      toast.error(errorMessage);
+      console.log(error);
     } finally {
       setLoading(false);
     }

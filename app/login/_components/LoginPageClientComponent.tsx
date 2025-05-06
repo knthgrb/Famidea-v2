@@ -24,8 +24,22 @@ export default function LoginPageClientComponent() {
       const formData = new FormData();
       formData.append("email", form.email);
       formData.append("password", form.password);
-      const { success, user } = await login(formData);
-      if (success) {
+      const { error, user } = await login(formData);
+      if (error) {
+        let errorMessage = "An unexpected error occurred. Please try again.";
+        if (typeof error === "string") {
+          errorMessage = error;
+        } else if (error?.message) {
+          if (
+            error.message.toLowerCase().includes("invalid login credentials")
+          ) {
+            errorMessage = "Invalid email or password";
+          } else {
+            errorMessage = error.message;
+          }
+        }
+        toast.error(errorMessage);
+      } else {
         if (user?.user_metadata?.user_type === "admin") {
           router.push("/admin");
         } else if (user?.user_metadata?.has_finished_onboarding === false) {
@@ -35,17 +49,7 @@ export default function LoginPageClientComponent() {
         }
       }
     } catch (error: any) {
-      let errorMessage = "An unexpected error occurred. Please try again.";
-      if (typeof error === "string") {
-        errorMessage = error;
-      } else if (error?.message) {
-        if (error.message.toLowerCase().includes("invalid login credentials")) {
-          errorMessage = "Invalid email or password";
-        } else {
-          errorMessage = error.message;
-        }
-      }
-      toast.error(errorMessage);
+      console.log(error);
     } finally {
       setLoading(false);
     }
