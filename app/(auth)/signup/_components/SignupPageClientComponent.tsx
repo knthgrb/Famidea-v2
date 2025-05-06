@@ -41,7 +41,7 @@ export default function SignupPageClientComponent() {
         error?.message &&
         error.message.toLowerCase().includes("user already exists")
       ) {
-        toast.error("User already exists");
+        toast("User already exists");
       }
     } finally {
       setLoading(false);

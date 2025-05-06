@@ -39,7 +39,7 @@ export default function LoginPageClientComponent() {
         error?.message &&
         error.message.toLowerCase().includes("invalid login credentials")
       ) {
-        toast.error("Invalid email or password");
+        toast("Invalid email or password");
       }
     } finally {
       setLoading(false);
