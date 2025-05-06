@@ -37,6 +37,7 @@ export default function SignupPageClientComponent() {
         router.push("/confirm-email");
       }
     } catch (error: any) {
+      console.log(error);
       if (
         error?.message &&
         error.message.toLowerCase().includes("user already exists")

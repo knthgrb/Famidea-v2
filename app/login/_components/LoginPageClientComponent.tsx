@@ -35,6 +35,7 @@ export default function LoginPageClientComponent() {
         }
       }
     } catch (error: any) {
+      console.log(error);
       if (
         error?.message &&
         error.message.toLowerCase().includes("invalid login credentials")
