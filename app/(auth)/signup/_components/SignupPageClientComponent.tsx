@@ -9,7 +9,6 @@ import { toast } from "sonner";
 const userTypes = [
   { value: "patient", label: "Patient" },
   { value: "birth_center", label: "Birth Center" },
-  { value: "admin", label: "Admin" },
 ];
 
 export default function SignupPageClientComponent() {
@@ -21,6 +20,8 @@ export default function SignupPageClientComponent() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const allowedUserTypes = ["patient", "birth_center"];
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -31,6 +32,10 @@ export default function SignupPageClientComponent() {
     e.preventDefault();
     setLoading(true);
     try {
+      if (!allowedUserTypes.includes(form.userType)) {
+        throw new Error("Invalid user type");
+      }
+
       const formData = new FormData();
       formData.append("email", form.email);
       formData.append("password", form.password);
