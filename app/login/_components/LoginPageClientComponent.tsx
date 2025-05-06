@@ -35,13 +35,17 @@ export default function LoginPageClientComponent() {
         }
       }
     } catch (error: any) {
-      console.log(error);
-      if (
-        error?.message &&
-        error.message.toLowerCase().includes("invalid login credentials")
-      ) {
-        toast.error("Invalid email or password");
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      if (typeof error === "string") {
+        errorMessage = error;
+      } else if (error?.message) {
+        if (error.message.toLowerCase().includes("invalid login credentials")) {
+          errorMessage = "Invalid email or password";
+        } else {
+          errorMessage = error.message;
+        }
       }
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

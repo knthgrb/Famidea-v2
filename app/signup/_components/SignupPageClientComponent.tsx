@@ -37,13 +37,17 @@ export default function SignupPageClientComponent() {
         router.push("/confirm-email");
       }
     } catch (error: any) {
-      console.log(error);
-      if (
-        error?.message &&
-        error.message.toLowerCase().includes("user already exists")
-      ) {
-        toast.error("User already exists");
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      if (typeof error === "string") {
+        errorMessage = error;
+      } else if (error?.message) {
+        if (error.message.toLowerCase().includes("user already exists")) {
+          errorMessage = "User already exists";
+        } else {
+          errorMessage = error.message;
+        }
       }
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
