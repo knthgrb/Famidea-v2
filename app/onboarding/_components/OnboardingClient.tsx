@@ -2,8 +2,7 @@
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { toast } from "react-toastify";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -121,13 +120,6 @@ export default function OnboardingPage() {
     }
   };
 
-  const showToast = (message: string, type: "success" | "error") => {
-    toast[type](message, {
-      duration: 4000,
-      position: "top-center",
-    });
-  };
-
   const handleBirthCenterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -163,9 +155,8 @@ export default function OnboardingPage() {
 
       const geocodeData = await response.json();
       if (!geocodeData.length) {
-        showToast(
-          "Unable to find the location. Please check the address details.",
-          "error"
+        toast.error(
+          "Unable to find the location. Please check the address details."
         );
         setIsSubmitting(false);
         return;
@@ -220,10 +211,10 @@ export default function OnboardingPage() {
       });
       if (updateError) throw updateError;
 
-      showToast("Birth center profile created successfully!", "success");
+      toast.success("Birth center profile created successfully!");
       router.push("/pending-approval");
     } catch (error: any) {
-      showToast(error.message || "An error occurred", "error");
+      toast.error(error.message || "An error occurred");
     } finally {
       setIsSubmitting(false);
     }
@@ -264,9 +255,8 @@ export default function OnboardingPage() {
 
       const geocodeData = await response.json();
       if (!geocodeData.length) {
-        showToast(
-          "Unable to find the location. Please check the address details.",
-          "error"
+        toast.error(
+          "Unable to find the location. Please check the address details."
         );
         setIsSubmitting(false);
         return;
@@ -307,10 +297,10 @@ export default function OnboardingPage() {
       });
       if (updateError) throw updateError;
 
-      showToast("Patient profile created successfully!", "success");
+      toast.success("Patient profile created successfully!");
       router.push("/patient");
     } catch (error: any) {
-      showToast(error.message || "An error occurred", "error");
+      toast.error(error.message || "An error occurred");
     } finally {
       setIsSubmitting(false);
     }

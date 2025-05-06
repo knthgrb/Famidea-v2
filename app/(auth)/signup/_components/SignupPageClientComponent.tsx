@@ -4,7 +4,7 @@ import Logo from "@/components/common/Logo";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 const userTypes = [{ value: "birth_center", label: "Birth Center" }];
 
@@ -41,7 +41,7 @@ export default function SignupPageClientComponent() {
         error?.message &&
         error.message.toLowerCase().includes("user already exists")
       ) {
-        toast("User already exists");
+        toast.error("User already exists");
       }
     } finally {
       setLoading(false);

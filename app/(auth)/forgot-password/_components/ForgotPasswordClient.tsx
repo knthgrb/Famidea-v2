@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 export default function ForgotPasswordClientComponent() {
   const [email, setEmail] = useState("");

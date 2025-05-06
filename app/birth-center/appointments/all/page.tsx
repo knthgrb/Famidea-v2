@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { toast } from "react-toastify";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -110,7 +111,7 @@ export default function AllAppointmentsPage() {
       .eq("id", appointmentId);
 
     if (updateError) {
-      alert("Failed to update status: " + updateError.message);
+      toast.error("Failed to update status: " + updateError.message);
       return false;
     }
 
@@ -155,11 +156,7 @@ export default function AllAppointmentsPage() {
         is_read: false,
       });
 
-    if (notificationError) {
-      alert("Failed to create notification: " + notificationError.message);
-      return false;
-    }
-
+    toast.success("Appointment status updated");
     return true;
   };
 

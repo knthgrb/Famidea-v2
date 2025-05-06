@@ -4,7 +4,7 @@ import Logo from "@/components/common/Logo";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 export default function LoginPageClientComponent() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -39,7 +39,7 @@ export default function LoginPageClientComponent() {
         error?.message &&
         error.message.toLowerCase().includes("invalid login credentials")
       ) {
-        toast("Invalid email or password");
+        toast.error("Invalid email or password");
       }
     } finally {
       setLoading(false);

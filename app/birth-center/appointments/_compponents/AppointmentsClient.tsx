@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import DefaultAvatar from "@/components/common/DefaultAvatar";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 // Helper for time formatting
 const formatTime = (date: Date) =>
@@ -228,7 +229,7 @@ export default function AppointmentsPage() {
     );
 
     if (error) {
-      alert("Failed to save timeslots: " + error.message);
+      toast.error("Failed to save timeslots");
     } else {
       setShowTimeslotModal(false);
     }
@@ -260,7 +261,7 @@ export default function AppointmentsPage() {
       .eq("id", appointmentId);
 
     if (updateError) {
-      alert("Failed to update status: " + updateError.message);
+      toast.error("Failed to update status");
       return false;
     }
 
@@ -305,11 +306,7 @@ export default function AppointmentsPage() {
         is_read: false,
       });
 
-    if (notificationError) {
-      alert("Failed to create notification: " + notificationError.message);
-      return false;
-    }
-
+    toast.success("Appointment status updated");
     return true;
   };
 

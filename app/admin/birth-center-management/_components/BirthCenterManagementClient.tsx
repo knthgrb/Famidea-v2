@@ -1,7 +1,7 @@
 "use client";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { BirthCenter } from "@/lib/types/birthcenter";
 import { StatusTabs } from "../../_components/StatusTabs";
 import { BirthCenterTable } from "./BirthCenterTable";

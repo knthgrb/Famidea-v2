@@ -4,6 +4,7 @@ import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/common/Loader";
+import { toast } from "react-toastify";
 
 // Types based on the database schema
 interface Patient {
@@ -243,10 +244,10 @@ export default function PatientDetailsPage({
 
       // Close modal and show success message
       setIsModalOpen(false);
-      alert("Prenatal record saved successfully!");
+      toast.success("Prenatal record saved successfully!");
     } catch (error) {
       console.error("Error saving prenatal record:", error);
-      alert("Failed to save prenatal record. Please try again.");
+      toast.error("Failed to save prenatal record. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

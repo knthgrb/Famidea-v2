@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/common/Loader";
 import PageLoader from "@/components/common/PageLoader";
+import { toast } from "react-toastify";
 
 export default function ServicesPage() {
   const router = useRouter();
@@ -126,7 +127,7 @@ export default function ServicesPage() {
       setServices(updatedServices || []);
     } catch (error) {
       console.error("Error saving services:", error);
-      alert("Failed to save services. Please try again.");
+      toast.error("Failed to save services. Please try again.");
     } finally {
       setLoading(false);
     }

@@ -4,6 +4,7 @@ import { createClient } from "@/utils/supabase/client";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Loader from "@/components/common/Loader";
+import { toast } from "react-toastify";
 
 interface Service {
   id: number;
@@ -101,7 +102,7 @@ export default function EditServicePage({
       router.refresh();
     } catch (error) {
       console.error("Error updating service:", error);
-      alert("Failed to update service. Please try again.");
+      toast.error("Failed to update service. Please try again.");
     } finally {
       setSaving(false);
     }
