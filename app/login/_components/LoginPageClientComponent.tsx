@@ -35,7 +35,6 @@ export default function LoginPageClientComponent() {
         }
       }
     } catch (error: any) {
-      console.log(error.message);
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (typeof error === "string") {
         errorMessage = error;

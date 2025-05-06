@@ -19,9 +19,7 @@ export async function signup(formData: FormData) {
   };
 
   const { error } = await supabase.auth.signUp(data);
-  if (error) {
-    throw new Error(error.message);
-  }
+
   revalidatePath("/", "layout");
   return { success: true };
 }

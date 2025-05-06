@@ -11,9 +11,7 @@ export async function login(formData: FormData) {
     password: formData.get("password") as string,
   };
   const { data: user, error } = await supabase.auth.signInWithPassword(data);
-  if (error) {
-    throw new Error(error.message);
-  }
+
   revalidatePath("/", "layout");
   return { success: true, user: user?.user };
 }
