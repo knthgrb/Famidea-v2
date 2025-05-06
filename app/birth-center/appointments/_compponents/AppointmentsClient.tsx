@@ -295,7 +295,7 @@ export default function AppointmentsPage() {
     const { error: notificationError } = await supabase
       .from("notifications")
       .insert({
-        type: "appointment_status",
+        type: "appointment",
         title: notificationTitle,
         body: notificationBody,
         patient_id: patientId,

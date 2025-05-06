@@ -199,6 +199,17 @@ export default function MessagesPage() {
     if (message) {
       setMessages([...messages, message]);
       setNewMessage("");
+
+      await supabase.from("notifications").insert({
+        type: "message",
+        title: "New Message",
+        body: "You have received a new message from the birth center.",
+        patient_id: selectedPatient.id,
+        birth_center_id: birthCenter.id,
+        appointment_id: null,
+        receiver_id: selectedPatient.id,
+        is_read: false,
+      });
     }
   };
 
