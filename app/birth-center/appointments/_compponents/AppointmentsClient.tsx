@@ -154,7 +154,7 @@ export default function AppointmentsPage() {
   const firstDay = new Date(calendarYear, calendarMonth, 1).getDay();
 
   // Timeslot modal logic
-  const openTimeslotModal = (date: Date) => {
+  const openTimeslotModal = async (date: Date) => {
     setSelectedDate(date);
 
     // Find appointments for this date
@@ -167,20 +167,48 @@ export default function AppointmentsPage() {
       );
     });
 
-    // Generate slots and mark as booked if overlapping with any appointment
-    const slots = generateTimeslotsForDate(
+    // Fetch existing timeslots from DB
+    const supabase = createClient();
+    const { data: timeslotData } = await supabase
+      .from("timeslots")
+      .select("*")
+      .eq("birth_center_id", birthCenterId)
+      .eq("date", date.toLocaleDateString("en-CA"))
+      .single();
+
+    // Parse available slots from DB
+    let availableSlots: { start: string; end: string }[] = [];
+    if (timeslotData && timeslotData.slots) {
+      availableSlots = JSON.parse(timeslotData.slots);
+    }
+
+    // Generate all possible slots for the day
+    const allSlots = generateTimeslotsForDate(
       date,
       startHour,
       endHour,
       interval
-    ).map((slot) => {
+    );
+
+    // Map all slots, marking available/booked
+    const slots = allSlots.map((slot) => {
+      // Is this slot available in DB?
+      const isAvailable = availableSlots.some(
+        (dbSlot) =>
+          new Date(dbSlot.start).getTime() === slot.start.getTime() &&
+          new Date(dbSlot.end).getTime() === slot.end.getTime()
+      );
+      // Is this slot booked by an appointment?
       const isBooked = apptsForDate.some((appt) => {
         const apptStart = new Date(appt.appointment_date);
-        const apptEnd = new Date(apptStart.getTime() + 60 * 60 * 1000); // 1 hour appt
-        // Check overlap
+        const apptEnd = new Date(apptStart.getTime() + 60 * 60 * 1000);
         return slot.start < apptEnd && slot.end > apptStart;
       });
-      return { ...slot, booked: isBooked, available: !isBooked };
+      return {
+        ...slot,
+        available: isAvailable && !isBooked,
+        booked: isBooked,
+      };
     });
 
     setTimeslots(slots);
@@ -217,11 +245,7 @@ export default function AppointmentsPage() {
       [
         {
           birth_center_id: birthCenterId,
-          date: new Date(
-            selectedDate.getFullYear(),
-            selectedDate.getMonth(),
-            selectedDate.getDate()
-          ).toISOString(),
+          date: selectedDate.toLocaleDateString("en-CA"), // 'YYYY-MM-DD'
           slots: JSON.stringify(availableSlots),
         },
       ],
