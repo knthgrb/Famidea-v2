@@ -87,17 +87,39 @@ export default function ServicesPage() {
     try {
       setLoading(true);
 
-      // 1. Delete existing services for this birth center
-      const { error: deleteError } = await supabase
+      // 1. Get current services
+      const { data: currentServices } = await supabase
         .from("services")
-        .delete()
+        .select("*")
         .eq("birth_center_id", birthCenterId);
 
-      if (deleteError) throw deleteError;
+      // 2. Deactivate services that are no longer selected
+      const servicesToDeactivate = (currentServices || []).filter(
+        (service) => !selectedServiceIds.includes(service.service_id)
+      );
 
-      // 2. Insert new services
-      if (selectedServiceIds.length > 0) {
-        const inserts = selectedServiceIds.map((service_id) => ({
+      if (servicesToDeactivate.length > 0) {
+        const { error: deactivateError } = await supabase
+          .from("services")
+          .update({ is_active: false })
+          .in(
+            "id",
+            servicesToDeactivate.map((s) => s.id)
+          );
+
+        if (deactivateError) throw deactivateError;
+      }
+
+      // 3. Activate or insert new services
+      const existingServiceIds = (currentServices || []).map(
+        (s) => s.service_id
+      );
+      const newServiceIds = selectedServiceIds.filter(
+        (id) => !existingServiceIds.includes(id)
+      );
+
+      if (newServiceIds.length > 0) {
+        const inserts = newServiceIds.map((service_id) => ({
           birth_center_id: birthCenterId,
           service_id,
           is_active: true,
@@ -113,6 +135,24 @@ export default function ServicesPage() {
           .insert(inserts);
 
         if (insertError) throw insertError;
+      }
+
+      // 4. Reactivate any previously deactivated services that are now selected
+      const servicesToReactivate = (currentServices || []).filter(
+        (service) =>
+          selectedServiceIds.includes(service.service_id) && !service.is_active
+      );
+
+      if (servicesToReactivate.length > 0) {
+        const { error: reactivateError } = await supabase
+          .from("services")
+          .update({ is_active: true })
+          .in(
+            "id",
+            servicesToReactivate.map((s) => s.id)
+          );
+
+        if (reactivateError) throw reactivateError;
       }
 
       setEditMode(false);
