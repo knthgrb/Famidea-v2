@@ -23,11 +23,10 @@ export async function getUnreadMessages(birthCenterId: string) {
     .from("messages")
     .select("*", { count: "exact" })
     .is("read_at", null)
-    .eq("birth_center_id", birthCenterId);
+    .eq("receiver_id", birthCenterId);
 
   if (error) {
     console.error("Error fetching unread messages:", error);
-    throw new Error(error.message || "Failed to fetch unread messages");
   }
 
   if (typeof count !== "number") {

@@ -25,8 +25,8 @@ export default async function DashboardClient() {
     .single();
 
   // Now we know birthCenter is not null
-  const totalPatients = await getTotalPatients();
-  const totalAppointments = await getTotalAppointments();
+  const totalPatients = await getTotalPatients(birthCenter?.id);
+  const totalAppointments = await getTotalAppointments(birthCenter?.id);
   const unreadMessages = await getUnreadMessages(birthCenter?.id);
 
   // --- Fetch patient statistics ---
@@ -34,7 +34,7 @@ export default async function DashboardClient() {
     totalPatients: statTotal,
     newPatients,
     oldPatients,
-  } = await getPatientStatistic();
+  } = await getPatientStatistic(birthCenter?.id);
 
   return (
     <>
