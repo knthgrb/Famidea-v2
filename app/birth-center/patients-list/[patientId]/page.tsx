@@ -4,7 +4,7 @@ import PatientDetailsPage from "./_components/PatientDetailsClient";
 export default function page({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ patientId: string }>;
 }) {
   return <PatientDetailsPage params={params} />;
 }

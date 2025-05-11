@@ -165,8 +165,13 @@ export default function PatientsListPage() {
   };
 
   // Add this function to handle patient click
-  const handlePatientClick = (patientId: string) => {
-    router.push(`/birth-center/patients-list/${patientId}`);
+  const handlePatientClick = (patientId: string, appointmentId: string) => {
+    router.push(
+      `/birth-center/patients-list/${patientId}?appointmentId=${appointmentId}&service=${
+        appointments.find((appointment) => appointment.id === appointmentId)
+          ?.service.services_list.name
+      }`
+    );
   };
 
   if (loading) {
@@ -220,7 +225,9 @@ export default function PatientsListPage() {
               <div
                 key={appointment.id}
                 className="grid grid-cols-5 p-4 items-center hover:bg-[#c8e8ea] cursor-pointer transition-colors"
-                onClick={() => handlePatientClick(appointment.patient.id)}
+                onClick={() =>
+                  handlePatientClick(appointment.patient.id, appointment.id)
+                }
               >
                 <div className="text-[#3ba39c] font-medium capitalize">
                   {`${appointment.patient.first_name} ${appointment.patient.last_name}`}

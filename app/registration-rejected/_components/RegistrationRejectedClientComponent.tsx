@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { logout } from "@/app/api/auth/logout";
+import { logout } from "@/app/services/auth/logout";
 export default function RegistrationRejectedPage() {
   const handleSignOut = async () => {
     await logout();

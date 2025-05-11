@@ -1,5 +1,5 @@
 "use client";
-import { logout } from "@/app/api/auth/logout";
+import { logout } from "@/app/services/auth/logout";
 import Logo from "@/components/common/Logo";
 import React, { useState } from "react";
 import LogoutComponent from "./LogoutComponent";
@@ -13,13 +13,13 @@ const navItems = [
     href: "/birth-center/dashboard",
   },
   {
-    label: "Appointment",
+    label: "Appointments",
     icon: "calendar",
     href: "/birth-center/appointments",
   },
   { label: "Services", icon: "heart", href: "/birth-center/services" },
   { label: "Patients", icon: "user", href: "/birth-center/patients-list" },
-  { label: "Message", icon: "mail", href: "/birth-center/messages" },
+  { label: "Messages", icon: "mail", href: "/birth-center/messages" },
   { label: "Settings", icon: "settings", href: "/birth-center/settings" },
 ];
 

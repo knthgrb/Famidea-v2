@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import Loader from "@/components/common/Loader";
+import { useRouter } from "next/navigation";
 
 interface Appointment {
   id: string;
@@ -52,9 +53,10 @@ const getStatusColor = (status: string) => {
 export default function PatientAppointmentsPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ patientId: string }>;
 }) {
-  const { slug } = React.use(params);
+  const router = useRouter();
+  const { patientId } = React.use(params);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [patientName, setPatientName] = useState("");
@@ -67,7 +69,7 @@ export default function PatientAppointmentsPage({
       const { data: patientData } = await supabase
         .from("patients")
         .select("first_name, last_name")
-        .eq("id", slug)
+        .eq("id", patientId)
         .single();
 
       if (patientData) {
@@ -92,7 +94,7 @@ export default function PatientAppointmentsPage({
           )
         `
         )
-        .eq("patient_id", slug)
+        .eq("patient_id", patientId)
         .order("appointment_date", { ascending: false });
 
       if (error) {
@@ -105,7 +107,7 @@ export default function PatientAppointmentsPage({
     }
 
     fetchAppointments();
-  }, [slug]);
+  }, [patientId]);
 
   if (loading) {
     return (
@@ -117,9 +119,31 @@ export default function PatientAppointmentsPage({
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-2 capitalize">
-        {patientName}'s Appointments
-      </h1>
+      <div className="flex items-center gap-4 mb-6">
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="w-5 h-5"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+            />
+          </svg>
+          Back
+        </button>
+        <h1 className="text-3xl font-bold capitalize">
+          {patientName}'s Appointments
+        </h1>
+      </div>
       <p className="text-gray-600 mb-6">
         Showing all appointments from most recent
       </p>

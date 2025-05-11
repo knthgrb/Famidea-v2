@@ -1,6 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { getBirthCenterRegistrationStatus } from "./api/birth-center/birth-center";
+import { getBirthCenterRegistrationStatus } from "./services/birth-center/birth-center";
 
 export default async function page() {
   const supabase = await createClient();

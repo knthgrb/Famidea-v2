@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import Loader from "@/components/common/Loader";
+import { useRouter } from "next/navigation";
 
 interface ChildInfo {
   id: string;
@@ -30,9 +31,10 @@ interface ChildInfo {
 export default function ChildInfoPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ patientId: string }>;
 }) {
-  const { slug } = React.use(params);
+  const router = useRouter();
+  const { patientId } = React.use(params);
   const [children, setChildren] = useState<ChildInfo[]>([]);
   const [selectedChild, setSelectedChild] = useState<ChildInfo | null>(null);
   const [loading, setLoading] = useState(true);
@@ -44,14 +46,14 @@ export default function ChildInfoPage({
 
   useEffect(() => {
     fetchChildren();
-  }, [slug]);
+  }, [patientId]);
 
   async function fetchChildren() {
     setLoading(true);
     const { data, error } = await supabase
       .from("child_info")
       .select("*")
-      .eq("parent_id", slug);
+      .eq("parent_id", patientId);
 
     if (error) {
       console.error("Error fetching children:", error);
@@ -124,7 +126,7 @@ export default function ChildInfoPage({
       // Insert new record
       const { error } = await supabase
         .from("child_info")
-        .insert([{ ...updatedData, parent_id: slug }]);
+        .insert([{ ...updatedData, parent_id: patientId }]);
 
       if (error) {
         console.error("Error adding child info:", error);
@@ -138,15 +140,19 @@ export default function ChildInfoPage({
   };
 
   const handleAddChild = () => {
-    setFormData({ parent_id: slug });
+    setFormData({ parent_id: patientId });
     setSelectedChild(null);
-    setIsEditing(true);
+    setIsEditing(false);
   };
 
   const handleEditChild = (child: ChildInfo) => {
     setFormData(child);
     setSelectedChild(child);
-    setIsEditing(true);
+    setIsEditing(false);
+  };
+
+  const handleGoBack = () => {
+    router.back();
   };
 
   if (loading) {
@@ -644,7 +650,27 @@ export default function ChildInfoPage({
   // Render list of children
   const renderChildrenList = () => (
     <div>
-      <h2 className="text-xl font-semibold mb-4">Children</h2>
+      <div className="flex justify-between items-center mb-6">
+        <button
+          onClick={handleGoBack}
+          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+              clipRule="evenodd"
+            />
+          </svg>
+          Back
+        </button>
+        <h2 className="text-xl font-semibold">Children</h2>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {children.map((child) => (
           <div

@@ -1,5 +1,5 @@
 "use client";
-import { logout } from "@/app/api/auth/logout";
+import { logout } from "@/app/services/auth/logout";
 import Logo from "@/components/common/Logo";
 import React, { useState } from "react";
 import Link from "next/link";

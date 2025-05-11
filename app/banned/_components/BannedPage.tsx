@@ -1,5 +1,5 @@
 "use client";
-import { logout } from "@/app/api/auth/logout";
+import { logout } from "@/app/services/auth/logout";
 import React from "react";
 import { FaBan } from "react-icons/fa";
 

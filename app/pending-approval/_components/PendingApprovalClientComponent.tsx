@@ -1,5 +1,5 @@
 "use client";
-import { logout } from "@/app/api/auth/logout";
+import { logout } from "@/app/services/auth/logout";
 export default function PendingApprovalClientComponent() {
   const handleSignOut = async () => {
     await logout();

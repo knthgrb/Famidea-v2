@@ -1,5 +1,5 @@
 "use client";
-import { login } from "@/app/api/auth/login";
+import { login } from "@/app/services/auth/login";
 import Logo from "@/components/common/Logo";
 import Image from "next/image";
 import { useRouter } from "next/navigation";

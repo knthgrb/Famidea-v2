@@ -1,6 +1,6 @@
 "use client";
 
-import { logout } from "@/app/api/auth/logout";
+import { logout } from "@/app/services/auth/logout";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 export default function UnauthorizedClientComponent() {

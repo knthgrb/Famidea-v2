@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Loader from "@/components/common/Loader";
 import { toast } from "react-toastify";
 
@@ -52,9 +52,12 @@ interface PrenatalFormData {
 export default function PatientDetailsPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ patientId: string }>;
 }) {
-  const { slug } = React.use(params);
+  const { patientId } = React.use(params);
+  const searchParams = useSearchParams();
+  const appointmentId = searchParams.get("appointmentId");
+  const service = searchParams.get("service");
   const router = useRouter();
   const [patientDetails, setPatientDetails] = useState<PatientDetails | null>(
     null
@@ -90,7 +93,7 @@ export default function PatientDetailsPage({
           profile_picture_url
         `
         )
-        .eq("id", slug)
+        .eq("id", patientId)
         .single();
 
       if (patientError) {
@@ -113,7 +116,7 @@ export default function PatientDetailsPage({
           )
         `
         )
-        .eq("patient_id", slug);
+        .eq("patient_id", patientId);
 
       if (servicesError) {
         console.error("Error fetching services:", servicesError);
@@ -133,17 +136,25 @@ export default function PatientDetailsPage({
     }
 
     fetchPatientDetails();
-  }, [slug]);
+  }, [patientId]);
 
   useEffect(() => {
     async function fetchPrenatalRecord() {
-      if (!slug) return;
+      if (!patientId) return;
 
       const supabase = createClient();
-      const { data, error } = await supabase
+      let query = supabase
         .from("prenatal-table")
         .select("*")
-        .eq("patient_id", slug)
+        .eq("patient_id", patientId);
+
+      // If appointmentId is present, filter by it
+      if (appointmentId) {
+        query = query.eq("appointment_id", appointmentId);
+      }
+
+      // Get the latest if multiple
+      const { data, error } = await query
         .order("created_at", { ascending: false })
         .limit(1)
         .single();
@@ -163,16 +174,16 @@ export default function PatientDetailsPage({
     }
 
     fetchPrenatalRecord();
-  }, [slug]);
+  }, [patientId, appointmentId]);
 
   const handleViewAppointment = () => {
     // Navigate to appointments view
-    router.push(`/birth-center/patients-list/${slug}/appointments`);
+    router.push(`/birth-center/patients-list/${patientId}/appointments`);
   };
 
   const handleViewBabyInfo = () => {
     // Navigate to baby's information view
-    router.push(`/birth-center/patients-list/${slug}/child-info`);
+    router.push(`/birth-center/patients-list/${patientId}/child-info`);
   };
 
   const handleOpenPrenatalForm = () => {
@@ -194,7 +205,8 @@ export default function PatientDetailsPage({
     const supabase = createClient();
     const submitData = {
       ...formData,
-      patient_id: slug,
+      patient_id: patientId,
+      ...(appointmentId && { appointment_id: appointmentId }),
     };
 
     try {
@@ -229,6 +241,7 @@ export default function PatientDetailsPage({
               pulse_rate: submitData.pulse_rate,
               body_temperature: submitData.body_temperature,
               fundal_height: submitData.fundal_height,
+              ...(appointmentId && { appointment_id: appointmentId }),
             },
           ])
           .select();
@@ -263,6 +276,26 @@ export default function PatientDetailsPage({
 
   return (
     <div className="p-4 sm:p-6">
+      {/* Back Button */}
+      <button
+        onClick={() => router.back()}
+        className="mb-4 flex items-center text-teal-600 hover:text-teal-700"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5 mr-1"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fillRule="evenodd"
+            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+            clipRule="evenodd"
+          />
+        </svg>
+        Back
+      </button>
+
       {/* Patient Profile Card */}
       <div className="bg-teal-500 rounded-2xl p-6 sm:p-8 text-white flex flex-col sm:flex-row justify-between items-center sm:items-start gap-6 sm:gap-0">
         <div className="flex-1 text-center sm:text-left">
@@ -275,7 +308,7 @@ export default function PatientDetailsPage({
               onClick={handleViewAppointment}
               className="w-full sm:w-auto bg-white text-teal-600 px-6 py-2 rounded-full hover:bg-teal-50 transition-colors"
             >
-              View Appointment
+              View all appointments
             </button>
             <button
               onClick={handleViewBabyInfo}
@@ -283,12 +316,14 @@ export default function PatientDetailsPage({
             >
               View Baby's Info
             </button>
-            <button
-              onClick={handleOpenPrenatalForm}
-              className="w-full sm:w-auto bg-white text-teal-600 px-6 py-2 rounded-full hover:bg-teal-50 transition-colors"
-            >
-              Prenatal Form
-            </button>
+            {service === "Pre Natal" && (
+              <button
+                onClick={handleOpenPrenatalForm}
+                className="w-full sm:w-auto bg-white text-teal-600 px-6 py-2 rounded-full hover:bg-teal-50 transition-colors"
+              >
+                Prenatal Form
+              </button>
+            )}
           </div>
         </div>
 
@@ -365,7 +400,14 @@ export default function PatientDetailsPage({
                       Estimated Due Date
                     </p>
                     <p className="mt-1 text-lg">
-                      {formData.estimated_due_date}
+                      {new Date(formData.estimated_due_date).toLocaleDateString(
+                        "en-US",
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        }
+                      )}
                     </p>
                   </div>
                   <div>

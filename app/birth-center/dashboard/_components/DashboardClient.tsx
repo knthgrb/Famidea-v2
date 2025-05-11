@@ -1,11 +1,11 @@
 import React from "react";
-import { getTotalPatients } from "@/app/api/birth-center/patient";
-import { getTotalAppointments } from "@/app/api/birth-center/appointment";
+import { getTotalPatients } from "@/app/services/birth-center/patient";
+import { getTotalAppointments } from "@/app/services/birth-center/appointment";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { getUnreadMessages } from "@/app/api/birth-center/messages";
+import { getUnreadMessages } from "@/app/services/birth-center/messages";
 import Link from "next/link";
-import { getPatientStatistic } from "@/app/api/patient/patients";
+import { getPatientStatistic } from "@/app/services/patient/patients";
 
 export default async function DashboardClient() {
   const supabase = await createClient();
