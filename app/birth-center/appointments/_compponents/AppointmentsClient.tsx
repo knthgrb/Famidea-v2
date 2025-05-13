@@ -487,7 +487,7 @@ export default function AppointmentsPage() {
                       return (
                         <td
                           key={dayIdx}
-                          className={`h-20 w-32 border border-black align-top relative cursor-pointer ${
+                          className={`h-20 w-48 border border-black align-top relative cursor-pointer ${
                             isCurrentMonth ? "" : "bg-gray-100"
                           }`}
                           onClick={() =>
@@ -521,7 +521,7 @@ export default function AppointmentsPage() {
                                           <img
                                             src={patient.profile_picture_url}
                                             alt="avatar"
-                                            className="w-10 h-10 rounded-full border-2 border-yellow-300"
+                                            className="w-8 h-8 rounded-full border-2 border-yellow-300"
                                           />
                                         ) : (
                                           <DefaultAvatar
@@ -533,7 +533,7 @@ export default function AppointmentsPage() {
                                           />
                                         )}
                                       </div>
-                                      <div className="text-blue-800 truncate">
+                                      <div className="text-blue-800 truncate w-12">
                                         {service
                                           ? service.description
                                           : "Unknown Service"}
