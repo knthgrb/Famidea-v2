@@ -47,6 +47,7 @@ interface PrenatalFormData {
   pulse_rate: number;
   body_temperature: number;
   fundal_height: number;
+  prescription: string;
 }
 
 export default function PatientDetailsPage({
@@ -72,6 +73,7 @@ export default function PatientDetailsPage({
     pulse_rate: 0,
     body_temperature: 0,
     fundal_height: 0,
+    prescription: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [existingPrenatalRecord, setExistingPrenatalRecord] =
@@ -169,6 +171,7 @@ export default function PatientDetailsPage({
           pulse_rate: data.pulse_rate,
           body_temperature: data.body_temperature,
           fundal_height: data.fundal_height,
+          prescription: data.prescription,
         });
       }
     }
@@ -190,7 +193,9 @@ export default function PatientDetailsPage({
     setIsModalOpen(true);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -222,6 +227,7 @@ export default function PatientDetailsPage({
             pulse_rate: submitData.pulse_rate,
             body_temperature: submitData.body_temperature,
             fundal_height: submitData.fundal_height,
+            prescription: submitData.prescription,
           })
           .eq("id", existingPrenatalRecord.id)
           .select();
@@ -241,6 +247,7 @@ export default function PatientDetailsPage({
               pulse_rate: submitData.pulse_rate,
               body_temperature: submitData.body_temperature,
               fundal_height: submitData.fundal_height,
+              prescription: submitData.prescription,
               ...(appointmentId && { appointment_id: appointmentId }),
             },
           ])
@@ -438,6 +445,14 @@ export default function PatientDetailsPage({
                     </p>
                     <p className="mt-1 text-lg">{formData.fundal_height} cm</p>
                   </div>
+                  <div className="col-span-2">
+                    <p className="text-sm font-medium text-gray-700">
+                      Prescription
+                    </p>
+                    <p className="mt-1 text-lg whitespace-pre-wrap">
+                      {formData.prescription}
+                    </p>
+                  </div>
                 </div>
                 <div className="flex justify-end space-x-3 mt-6">
                   <button
@@ -543,6 +558,20 @@ export default function PatientDetailsPage({
                       value={formData.fundal_height}
                       onChange={handleInputChange}
                       className="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                      required
+                    />
+                  </div>
+
+                  <div className="col-span-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Prescription
+                    </label>
+                    <textarea
+                      name="prescription"
+                      value={formData.prescription}
+                      onChange={handleInputChange}
+                      className="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                      rows={4}
                       required
                     />
                   </div>
