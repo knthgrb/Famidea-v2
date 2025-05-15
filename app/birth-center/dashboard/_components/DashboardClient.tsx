@@ -20,7 +20,7 @@ export default async function DashboardClient() {
   // Get birth center details
   const { data: birthCenter } = await supabase
     .from("birth_centers")
-    .select("id, total_rooms, available_rooms")
+    .select("id, total_rooms, available_rooms, picture_url, name, address")
     .eq("user_id", user.id)
     .single();
 
@@ -40,6 +40,27 @@ export default async function DashboardClient() {
     <>
       {/* Main Content */}
       <main className="flex-1 p-12">
+        {/* Birth Center Profile */}
+        <div className="flex items-center gap-4 mb-8">
+          {birthCenter?.picture_url ? (
+            <img
+              src={birthCenter.picture_url}
+              alt="Birth Center Profile"
+              className="w-20 h-20 rounded-full object-cover border-2 border-[#3ba39c]"
+            />
+          ) : (
+            <div className="w-20 h-20 rounded-full bg-[#3ba39c] flex items-center justify-center text-white text-2xl">
+              {birthCenter?.name?.charAt(0) || "BC"}
+            </div>
+          )}
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">
+              {birthCenter?.name}
+            </h1>
+            <p className="text-gray-600">{birthCenter?.address}</p>
+          </div>
+        </div>
+
         {/* Top Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           <Link href="/birth-center/patients-list" className="block">
